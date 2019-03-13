@@ -1,6 +1,7 @@
 #coding=utf-8
 __author__ = 'haosong'
 import numpy as np
+from time_sec_def import *
 
 def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_1,traded_time,\
                             rise_ratio_ask_1,rise_ratio_ask_2,rise_ratio_ask_3,rise_ratio_ask_4,\
@@ -89,8 +90,8 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
 
     if time1 == 0:
         index_one = np.where(time_second_basic <= 0)[0][-1]
-    elif time1 == 16200:
-        index_one = np.where(time_second_basic <= 16200)[0][-1]
+    elif time1 == TIME_INTV_4_30:
+        index_one = np.where(time_second_basic <= TIME_INTV_4_30)[0][-1]
 
     for i in np.arange(time1, time2):
         if i == 0 or i == 16200:
@@ -187,7 +188,7 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
             w_diff_235.append(W_A_B_235[index_one + (index - index_one)])
 
         elif len(index_array) == 0:
-            if i < 21600 - traded_time:
+            if i < TIME_INTV_6_00 - traded_time:
                 index_min = np.where(time_second_basic <= i + traded_time)[0][-1]
                 traded_min = ask_price_1[index:index_min]
                 if len(traded_min) == 0:
@@ -197,7 +198,7 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
                         traded.append(1)
                     else:
                         traded.append(0)
-            elif i >= 21600 - traded_time:
+            elif i >= TIME_INTV_6_00 - traded_time:
                 if bid_price_1[index] > ask_price_1[-1]:
                     traded.append(1)
                 else:

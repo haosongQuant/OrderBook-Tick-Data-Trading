@@ -5,6 +5,7 @@ import os, sys
 import pandas as pd
 import numpy as np
 sys.path.append('..//utils')
+from time_sec_def import *
 from order_book import order_book
 from time_transform import time_transform
 from rise_ask import rise_ask
@@ -26,7 +27,7 @@ def Feature_DataFrame_UP(traded_time,time_second_basic,bid_price_1,ask_price_1,r
                          W_AB_370, W_A_B_370, W_AB_460, W_A_B_460, W_AB_127, W_A_B_127, W_AB_235, W_A_B_235):
     # 09:00 ~ 11:30
     time1 = 0
-    time2 = 9000
+    time2 = TIME_INTV_2_30
     traded,index_,rise_ratio_second_1,rise_ratio_second_2,rise_ratio_second_3,\
     rise_ratio_second_4,rise_ratio_second_5,rise_ratio_second_6,rise_ratio_second_7,\
     rise_ratio_second_8,rise_ratio_second_9,rise_ratio_second_10,rise_ratio_second_11,\
@@ -84,8 +85,8 @@ def Feature_DataFrame_DOWN(traded_time,time_second_basic,bid_price_1,ask_price_1
                          W_A_B_532, W_AB_111, W_A_B_111, W_AB_190, W_A_B_190, W_AB_280 , W_A_B_280,\
                          W_AB_370, W_A_B_370, W_AB_460, W_A_B_460, W_AB_127, W_A_B_127, W_AB_235, W_A_B_235):
     # 13:30 ~ 15:00
-    time1 = 16200
-    time2 = 21600
+    time1 = TIME_INTV_4_30
+    time2 = TIME_INTV_6_00
     traded,index_,rise_ratio_second_1,rise_ratio_second_2,rise_ratio_second_3,\
     rise_ratio_second_4,rise_ratio_second_5,rise_ratio_second_6,rise_ratio_second_7,\
     rise_ratio_second_8,rise_ratio_second_9,rise_ratio_second_10,rise_ratio_second_11,\
