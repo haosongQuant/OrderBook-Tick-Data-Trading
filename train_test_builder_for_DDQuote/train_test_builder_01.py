@@ -39,7 +39,8 @@ def Feature_DataFrame_UP(traded_time,time_second_basic,bid_price_1,ask_price_1,r
     w_divid_010,w_diff_010,w_divid_001,w_diff_001,w_divid_910,w_diff_910,w_divid_820,w_diff_820,\
     w_divid_730,w_diff_730,w_divid_640,w_diff_640,w_divid_550,w_diff_550,w_divid_721,w_diff_721,\
     w_divid_532,w_diff_532,w_divid_111,w_diff_111,w_divid_190,w_diff_190,w_divid_280,w_diff_280,\
-    w_divid_370,w_diff_370,w_divid_460,w_diff_460,w_divid_127,w_diff_127,w_divid_235,w_diff_235=\
+    w_divid_370,w_diff_370,w_divid_460,w_diff_460,w_divid_127,w_diff_127,w_divid_235,w_diff_235,\
+    spread, Best_Ask, Best_Bid = \
         traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_1,traded_time,\
                                 rise_ratio_ask_1,rise_ratio_ask_2,rise_ratio_ask_3,rise_ratio_ask_4,\
                                 rise_ratio_ask_5,rise_ratio_ask_6,rise_ratio_ask_7,rise_ratio_ask_8,\
@@ -66,7 +67,8 @@ def Feature_DataFrame_UP(traded_time,time_second_basic,bid_price_1,ask_price_1,r
                     w_divid_010,w_diff_010,w_divid_001,w_diff_001,w_divid_910,w_diff_910,w_divid_820,w_diff_820,\
                     w_divid_730,w_diff_730,w_divid_640,w_diff_640,w_divid_550,w_diff_550,w_divid_721,w_diff_721,\
                     w_divid_532,w_diff_532,w_divid_111,w_diff_111,w_divid_190,w_diff_190,w_divid_280,w_diff_280,\
-                    w_divid_370,w_diff_370,w_divid_460,w_diff_460,w_divid_127,w_diff_127,w_divid_235,w_diff_235]).T
+                    w_divid_370,w_diff_370,w_divid_460,w_diff_460,w_divid_127,w_diff_127,w_divid_235,w_diff_235,\
+                    spread, Best_Ask, Best_Bid]).T
 
     return pd.DataFrame(data)#,traded_1 #, columns = ['label', 'rise', 'depth_divid', 'depth_diff'])
 
@@ -98,7 +100,8 @@ def Feature_DataFrame_DOWN(traded_time,time_second_basic,bid_price_1,ask_price_1
     w_divid_010,w_diff_010,w_divid_001,w_diff_001,w_divid_910,w_diff_910,w_divid_820,w_diff_820,\
     w_divid_730,w_diff_730,w_divid_640,w_diff_640,w_divid_550,w_diff_550,w_divid_721,w_diff_721,\
     w_divid_532,w_diff_532,w_divid_111,w_diff_111,w_divid_190,w_diff_190,w_divid_280,w_diff_280,\
-    w_divid_370,w_diff_370,w_divid_460,w_diff_460,w_divid_127,w_diff_127,w_divid_235,w_diff_235 =\
+    w_divid_370,w_diff_370,w_divid_460,w_diff_460,w_divid_127,w_diff_127,w_divid_235,w_diff_235,\
+    spread, Best_Ask, Best_Bid = \
         traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_1,traded_time,\
                                 rise_ratio_ask_1,rise_ratio_ask_2,rise_ratio_ask_3,rise_ratio_ask_4,\
                                 rise_ratio_ask_5,rise_ratio_ask_6,rise_ratio_ask_7,rise_ratio_ask_8,\
@@ -125,7 +128,8 @@ def Feature_DataFrame_DOWN(traded_time,time_second_basic,bid_price_1,ask_price_1
             w_divid_010,w_diff_010,w_divid_001,w_diff_001,w_divid_910,w_diff_910,w_divid_820,w_diff_820,\
             w_divid_730,w_diff_730,w_divid_640,w_diff_640,w_divid_550,w_diff_550,w_divid_721,w_diff_721,\
             w_divid_532,w_diff_532,w_divid_111,w_diff_111,w_divid_190,w_diff_190,w_divid_280,w_diff_280,\
-            w_divid_370,w_diff_370,w_divid_460,w_diff_460,w_divid_127,w_diff_127,w_divid_235,w_diff_235]).T
+            w_divid_370,w_diff_370,w_divid_460,w_diff_460,w_divid_127,w_diff_127,w_divid_235,w_diff_235,\
+            spread, Best_Ask, Best_Bid]).T
 
     return pd.DataFrame(data)
 
@@ -296,7 +300,7 @@ def train_test_to_csv(quotefilepath, quotefilename, traded_time):
 
 if __name__ == '__main__':
 
-    quotefilepath = 'D:\\高频资料\\20170103'
+    quotefilepath = 'E:\\高频五档行情\\dce\\20170103'
     quotefilename = 'm1705_20170103'
     traded_time = 600
 
