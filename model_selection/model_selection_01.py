@@ -80,6 +80,10 @@ class Model_Selection:
         self.true_values_day = {}
         self.summary_day = []
 
+        self.quoteSpread = []
+        self.short_loss = []
+        self.long_loss = []
+
     def Grid_fit(self,X_train,y_train,cv = 5,scoring = 'accuracy'):
 
         for key in self.keys:
@@ -142,6 +146,15 @@ class Model_Selection:
                 X_test = data_test.drop(['0','65','66','67'],axis=1)
                 y_test = data_test['0']
 
+                self.quoteSpread.extend(list(data_test['65']))
+                for k in np.arange(i + self.latest_sec, i + self.latest_sec + self.pred_sec):
+                    loss1 = self.data_set[day]['67'][k] - self.data_set[day]['66'][k+600] if (k+600) < 9000 \
+                            else self.data_set[day]['67'][k] - self.data_set[day]['66'][-1]
+                    self.short_loss.append(loss1)
+                    loss2 = self.data_set[day]['67'][k+600] - self.data_set[day]['66'][k] if (k+600) < 9000 \
+                            else self.data_set[day]['67'][-1] - self.data_set[day]['66'][k]
+                    self.long_loss.append(loss2)
+
                 #start = time.time()
                 self.Grid_fit(X_train, y_train, cv = 5, scoring = 'accuracy')
                 self.model_fit(X_train, y_train,X_test,y_test)
@@ -156,7 +169,7 @@ class Model_Selection:
                 self.true_values_day[key].append(self.true_values[key])
                 self.predict_values_day[key].append(self.predict_values[key])
 
-            self.summary_day.append(self.score_summary(sort_by = 'Accuracy_mean'))
+            # self.summary_day.append(self.score_summary(sort_by = 'Accuracy_mean'))
 
     def set_list(self):
 
@@ -192,7 +205,8 @@ class Model_Selection:
 
 
 if __name__ == '__main__':
-    datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\train_test_builder_for_DDQuote'
+    # datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\train_test_builder_for_DDQuote'
+    datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\train_test_builder_for_DDQuote'
     product = 'm1705'
     day_trade = ['20170103']
     data_up, data_down = read_csv(datasetPath, product, day_trade)
@@ -238,12 +252,18 @@ if __name__ == '__main__':
     cum_profit_label = []
     cum_profit = []
     best_cv_score = []
-    spread = 0.2 * data_up[0]['65'][1800:][9::10].values
-    loss = 0.2*(data_up[0]['67'][1800:9000-600][9::10].values - data_up[0]['67'][1800+600:9000][9::10].values)
-    for j in np.arange(0,len(pip.cv_acc_day[pip.keys[0]][0])):
+
+    # spread = 0.2 * data_up[0]['65'][1800:][9::10].values
+    # loss = 0.2*(data_up[0]['67'][1800:9000-600][9::10].values - data_up[0]['67'][1800+600:9000][9::10].values)
+
+    spread = pip.quoteSpread[9::10]
+    loss = pip.short_loss[9::10]
+
+    pipKeyList = list(pip.keys)
+    for j in np.arange(0,len((pip.cv_acc_day[pipKeyList[0]])[0])):
         max_al = {}
-        for i in np.arange(0,len(pip.keys)):
-            max_al[pip.keys[i]] = np.array(pip.cv_acc_day[pip.keys[i]])[0][j]
+        for i in np.arange(0,len(pipKeyList)):
+            max_al[pipKeyList[i]] = np.array(pip.cv_acc_day[pipKeyList[i]])[0][j]
         # select best algorithm in cv = 5
         top_cv_acc = sorted(max_al.items(),key = lambda x : x[1], reverse = True)[0:1][0]
         best_cv_score.append(top_cv_acc[1])
