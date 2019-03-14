@@ -140,7 +140,7 @@ def genData(quotefile, traded_time):
             ask_quantity_2,ask_quantity_3 = order_book(quotefile)
 
     time_second,time_second_basic = time_transform(time_sec, time_millis)
-    Ask1 = ask_price_1[np.where(time_second_basic <= 0.0)[0][-1]:]
+    Ask1 = ask_price_1[np.where(time_second_basic <= 0.0)[0][-1]:] #09:00 之后的数据
 
     before_time = 60.0 * 6
     rise_ratio_ask_1 = rise_ask(Ask1, time_second_basic, before_time)
@@ -300,7 +300,7 @@ def train_test_to_csv(quotefilepath, quotefilename, traded_time):
 
 if __name__ == '__main__':
 
-    quotefilepath = 'E:\\高频五档行情\\dce\\20170103'
+    quotefilepath = 'D:\\高频资料\\20170103'
     quotefilename = 'm1705_20170103'
     traded_time = 600
 
