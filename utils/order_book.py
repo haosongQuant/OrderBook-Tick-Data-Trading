@@ -1,4 +1,4 @@
-#coding=utf8
+#coding=utf-8
 __author__ = 'haosong'
 import pandas as pd
 import numpy as np

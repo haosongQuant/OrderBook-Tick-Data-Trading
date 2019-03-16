@@ -20,7 +20,6 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
     global index
 
     traded = []
-    index_ = []
 
     rise_ratio_second_1 = []
     rise_ratio_second_2 = []
@@ -92,21 +91,16 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
     Best_Bid = []
     spread = []
 
-    index_one = np.where(time_second_basic <= 0)[0][-1]
+    # index_one = np.where(time_second_basic <= 0)[0][-1]
 
+    close_time_basic = time_second_basic[-1]
     for i in np.arange(time1, time2):
-        if i == 0 or i == TIME_INTV_4_30:
-            index_array = np.where(time_second_basic <= i)[-1]
-        else:
-            index_array = np.where((time_second_basic < i+1) & (time_second_basic >= i))[-1]
+
+        index_array = np.where((time_second_basic < i+1) & (time_second_basic >= i))[-1]
 
         if len(index_array) > 0:
             index = index_array[-1]
-            if i == time1:
-                index_.append(index)
-            if i == time2 - 1:
-                index_.append(index)
-            if i < TIME_INTV_6_00 - traded_time:
+            if i < close_time_basic - traded_time:
                 index_min = np.where(time_second_basic <= i + traded_time)[0][-1]
                 traded_min = ask_price_1[index:index_min]
                 if len(traded_min) == 0:
@@ -116,42 +110,42 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
                         traded.append(1)
                     else:
                         traded.append(0)
-            elif i >= TIME_INTV_6_00 - traded_time:
+            elif i >= close_time_basic - traded_time:
                 if bid_price_1[index] > ask_price_1[-1]:
                     traded.append(1)
                 else:
                     traded.append(0)
 
-            rise_ratio_second_1.append(rise_ratio_ask_1[ (index - index_one) ])
-            rise_ratio_second_2.append(rise_ratio_ask_2[ (index - index_one) ])
-            rise_ratio_second_3.append(rise_ratio_ask_3[ (index - index_one) ])
-            rise_ratio_second_4.append(rise_ratio_ask_4[ (index - index_one) ])
-            rise_ratio_second_5.append(rise_ratio_ask_5[ (index - index_one) ])
-            rise_ratio_second_6.append(rise_ratio_ask_6[ (index - index_one) ])
-            rise_ratio_second_7.append(rise_ratio_ask_7[ (index - index_one) ])
-            rise_ratio_second_8.append(rise_ratio_ask_8[ (index - index_one) ])
-            rise_ratio_second_9.append(rise_ratio_ask_9[ (index - index_one) ])
-            rise_ratio_second_10.append(rise_ratio_ask_10[ (index - index_one) ])
-            rise_ratio_second_11.append(rise_ratio_ask_11[ (index - index_one) ])
-            rise_ratio_second_12.append(rise_ratio_ask_12[ (index - index_one) ])
-            rise_ratio_second_13.append(rise_ratio_ask_13[ (index - index_one) ])
-            rise_ratio_second_14.append(rise_ratio_ask_14[ (index - index_one) ])
-            rise_ratio_second_15.append(rise_ratio_ask_15[ (index - index_one) ])
-            rise_ratio_second_16.append(rise_ratio_ask_16[ (index - index_one) ])
-            rise_ratio_second_17.append(rise_ratio_ask_17[ (index - index_one) ])
-            rise_ratio_second_18.append(rise_ratio_ask_18[ (index - index_one) ])
-            rise_ratio_second_19.append(rise_ratio_ask_19[ (index - index_one) ])
-            rise_ratio_second_20.append(rise_ratio_ask_20[ (index - index_one) ])
-            rise_ratio_second_21.append(rise_ratio_ask_21[ (index - index_one) ])
-            rise_ratio_second_22.append(rise_ratio_ask_22[ (index - index_one) ])
-            rise_ratio_second_23.append(rise_ratio_ask_23[ (index - index_one) ])
-            rise_ratio_second_24.append(rise_ratio_ask_24[ (index - index_one) ])
-            rise_ratio_second_25.append(rise_ratio_ask_25[ (index - index_one) ])
-            rise_ratio_second_26.append(rise_ratio_ask_26[ (index - index_one) ])
-            rise_ratio_second_27.append(rise_ratio_ask_27[ (index - index_one) ])
-            rise_ratio_second_28.append(rise_ratio_ask_28[ (index - index_one) ])
-            rise_ratio_second_29.append(rise_ratio_ask_29[ (index - index_one) ])
-            rise_ratio_second_30.append(rise_ratio_ask_30[ (index - index_one) ])
+            rise_ratio_second_1.append(rise_ratio_ask_1[ index ])
+            rise_ratio_second_2.append(rise_ratio_ask_2[ index ])
+            rise_ratio_second_3.append(rise_ratio_ask_3[ index ])
+            rise_ratio_second_4.append(rise_ratio_ask_4[ index ])
+            rise_ratio_second_5.append(rise_ratio_ask_5[ index ])
+            rise_ratio_second_6.append(rise_ratio_ask_6[ index ])
+            rise_ratio_second_7.append(rise_ratio_ask_7[ index ])
+            rise_ratio_second_8.append(rise_ratio_ask_8[ index ])
+            rise_ratio_second_9.append(rise_ratio_ask_9[ index ])
+            rise_ratio_second_10.append(rise_ratio_ask_10[ index ])
+            rise_ratio_second_11.append(rise_ratio_ask_11[ index ])
+            rise_ratio_second_12.append(rise_ratio_ask_12[ index ])
+            rise_ratio_second_13.append(rise_ratio_ask_13[ index ])
+            rise_ratio_second_14.append(rise_ratio_ask_14[ index ])
+            rise_ratio_second_15.append(rise_ratio_ask_15[ index ])
+            rise_ratio_second_16.append(rise_ratio_ask_16[ index ])
+            rise_ratio_second_17.append(rise_ratio_ask_17[ index ])
+            rise_ratio_second_18.append(rise_ratio_ask_18[ index ])
+            rise_ratio_second_19.append(rise_ratio_ask_19[ index ])
+            rise_ratio_second_20.append(rise_ratio_ask_20[ index ])
+            rise_ratio_second_21.append(rise_ratio_ask_21[ index ])
+            rise_ratio_second_22.append(rise_ratio_ask_22[ index ])
+            rise_ratio_second_23.append(rise_ratio_ask_23[ index ])
+            rise_ratio_second_24.append(rise_ratio_ask_24[ index ])
+            rise_ratio_second_25.append(rise_ratio_ask_25[ index ])
+            rise_ratio_second_26.append(rise_ratio_ask_26[ index ])
+            rise_ratio_second_27.append(rise_ratio_ask_27[ index ])
+            rise_ratio_second_28.append(rise_ratio_ask_28[ index ])
+            rise_ratio_second_29.append(rise_ratio_ask_29[ index ])
+            rise_ratio_second_30.append(rise_ratio_ask_30[ index ])
 
             w_divid_100.append(W_AB_100[ index ])
             w_diff_100.append(W_A_B_100[ index ])
@@ -193,7 +187,8 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
             spread.append(ask_price_1[index] - bid_price_1[index])
 
         elif len(index_array) == 0:
-            if i < TIME_INTV_6_00 - traded_time:
+            print('warning: index_array is empty!')
+            if i < close_time_basic - traded_time:
                 index_min = np.where(time_second_basic <= i + traded_time)[0][-1]
                 traded_min = ask_price_1[index:index_min]
                 if len(traded_min) == 0:
@@ -203,7 +198,7 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
                         traded.append(1)
                     else:
                         traded.append(0)
-            elif i >= TIME_INTV_6_00 - traded_time:
+            elif i >= close_time_basic - traded_time:
                 if bid_price_1[index] > ask_price_1[-1]:
                     traded.append(1)
                 else:
@@ -278,7 +273,7 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
             Best_Bid.append(bid_price_1[index])
             spread.append(ask_price_1[index] - bid_price_1[index])
 
-    return traded,index_,rise_ratio_second_1,rise_ratio_second_2,rise_ratio_second_3,\
+    return traded,rise_ratio_second_1,rise_ratio_second_2,rise_ratio_second_3,\
             rise_ratio_second_4,rise_ratio_second_5,rise_ratio_second_6,rise_ratio_second_7,\
             rise_ratio_second_8,rise_ratio_second_9,rise_ratio_second_10,rise_ratio_second_11,\
             rise_ratio_second_12,rise_ratio_second_13,rise_ratio_second_14,rise_ratio_second_15,\
