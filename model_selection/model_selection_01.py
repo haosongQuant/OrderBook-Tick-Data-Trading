@@ -240,10 +240,11 @@ class Model_Selection:
 
 if __name__ == '__main__':
 
+    traded_time = 60 * 5
     parms = parsePara()
 
     # datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\train_test_builder_for_DDQuote'
-    datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\train_test_builder_for_DDQuote'
+    datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
     product = parms['contract']
     datelist = parms['datelist']
     day_trade = datelist.split(',')
@@ -253,7 +254,6 @@ if __name__ == '__main__':
 
     latest_sec = 60 * 30
     pred_sec = 10
-    traded_time = 60 * 10
     # day = len(day_trade)
     day = 1
 
@@ -313,17 +313,21 @@ if __name__ == '__main__':
         plt.figure(figsize = (20,8))
         plt.subplot(211)
         plt.plot(cum_profit,'-o',label = 'Profit & Loss',lw = 1,markersize = 3)
+        plt.axvline((4500-latest_sec-traded_time)/10)
+        plt.axvline((8100-latest_sec-traded_time)/10)
         plt.ylabel('Tick',size = 15)
         plt.legend(loc=0)
         plt.ylim(-7.5,2.5)
         plt.subplot(212)
         plt.plot(np.cumsum(cum_profit),'-o',label = 'Cum Profit',lw = 1,markersize = 2)
+        plt.axvline((4500-latest_sec-traded_time)/10)
+        plt.axvline((8100-latest_sec-traded_time)/10)
         plt.legend(loc=0)
         plt.xlabel('Rolling Window Numbers',size = 15)
         plt.ylabel('Profit',size = 15)
         # plt.show()
 
-        savePath = os.path.join('D:\\OrderBook-Tick-Data-Trading\\model_selection',
+        savePath = os.path.join('D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s',
                                 product+'_'+day_trade[iDay]+'.png')
         plt.savefig(savePath)
         plt.close()

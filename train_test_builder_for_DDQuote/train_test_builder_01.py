@@ -225,7 +225,7 @@ def train_test_to_csv(quotefilepath, quotefilename, traded_time):
 
     quotefile = os.path.join(quotefilepath, quotefilename+'.csv')
     data_feature_label,len_ = genData(quotefile, traded_time)
-    save_path = './' + quotefilename +'_label_feature.csv'
+    save_path = '../data result//trade '+str(traded_time)+' s//' + quotefilename +'_label_feature.csv'
     data_feature_label.to_csv(save_path, index = False)
     return
 
@@ -241,6 +241,6 @@ if __name__ == '__main__':
         print('----------------- ', contract, ' ---- ', date, ' -----------------')
         quotefilepath = 'E:\\高频五档行情\\dce\\' + date
         quotefilename = contract + '_' + date
-        traded_time = 600 #持仓最长10分钟
+        traded_time = 300 #持仓最长5分钟
 
         train_test_to_csv(quotefilepath, quotefilename, traded_time)
