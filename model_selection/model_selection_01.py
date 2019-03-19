@@ -87,16 +87,26 @@ class Model_Selection:
 
     def Grid_fit(self,X_train,y_train,cv = 5,scoring = 'accuracy'):
 
+        finishedKeyList = []
         for key in self.keys:
             print("Running GridSearchCV for %s." %(key) )
             model = self.models[key]
             model_grid = self.model_grid[key]
-            Grid = GridSearchCV(model, model_grid, cv = cv, scoring = scoring)
-            Grid.fit(X_train,y_train)
-            self.grid[key] = Grid
-            print(Grid.best_params_)
-            print('CV Best Score = %s'%(Grid.best_score_))
-            self.cv_acc[key].append(Grid.best_score_)
+            try:
+                Grid = GridSearchCV(model, model_grid, cv = cv, scoring = scoring)
+                Grid.fit(X_train,y_train)
+                self.grid[key] = Grid
+                self.cv_acc[key].append(Grid.best_score_)
+                print(Grid.best_params_)
+                print('CV Best Score = %f s'% Grid.best_score_)
+                finishedKeyList.append(key)
+            except Exception as e:
+                print('error', e)
+                for finishedKey in finishedKeyList:
+                    self.cv_acc[finishedKey].pop()
+                return False
+
+        return True
 
     def model_fit(self,X_train, y_train, X_test, y_test):
 
@@ -108,6 +118,12 @@ class Model_Selection:
             predictions = model.predict(X_test)
             self.predict_values[key].append(predictions.tolist())
             self.true_values[key].append(y_test.tolist())
+            if len(predictions.tolist()) != len(y_test.tolist()):
+                print('*********** Error! %s prediction size different from label size! **********' % key )
+                print(X_test)
+                print(y_test)
+                print(predictions)
+                exit()
             acc = metrics.accuracy_score(y_test,predictions)
             f_score = metrics.f1_score(y_test,predictions)
             print('Accuracy = %s'%(acc))
@@ -133,11 +149,11 @@ class Model_Selection:
         self.set_list_day() # store day values
         for day in np.arange(0,self.day):
             self.set_list() # store values
-            print('Day = %s'%(day+1))
             quoteSpreadBuf = []
             short_lossBuf = []
             long_lossBuf = []
-            for i in np.arange(0,len(self.data_set[day])-self.latest_sec-self.traded_time,self.pred_sec):
+            for i in np.arange(0,len(self.data_set[day])-self.latest_sec-self.traded_time-self.pred_sec,
+                               self.pred_sec):
 
                 print('--------------------Rolling Window Time = %s--------------------'%(i/self.pred_sec))
                 # Train data
@@ -146,7 +162,8 @@ class Model_Selection:
                 y_train = data_train['0']
 
                 # Test data
-                data_test = self.data_set[day][i + self.latest_sec:i + self.latest_sec + self.pred_sec]
+                data_test = self.data_set[day][i + self.latest_sec + self.traded_time :
+                                               i + self.latest_sec + self.traded_time + self.pred_sec]
                 X_test = data_test.drop(['0','65','66','67'],axis=1)
                 y_test = data_test['0']
 
@@ -160,8 +177,11 @@ class Model_Selection:
                     long_lossBuf.append(loss2)
 
                 #start = time.time()
-                self.Grid_fit(X_train, y_train, cv = 5, scoring = 'accuracy')
-                self.model_fit(X_train, y_train,X_test,y_test)
+                if self.Grid_fit(X_train, y_train, cv = 5, scoring = 'accuracy'):
+                    self.model_fit(X_train, y_train,X_test,y_test)
+                else:
+                    continue
+
                 #end = time.time()
                 #print('Total Time = %s'%(end - start)
 
@@ -169,7 +189,13 @@ class Model_Selection:
             self.short_loss.append(short_lossBuf)
             self.long_loss.append(long_lossBuf)
 
+            cv_acc_day_len = 0
             for key in self.keys:
+
+                if cv_acc_day_len != 0 and cv_acc_day_len != len(self.cv_acc[key]):
+                    print(key, 'error: cv_acc_day_len changing, %d : %d' % (cv_acc_day_len, len(self.cv_acc[key])))
+                else:
+                    cv_acc_day_len = len(self.cv_acc[key])
 
                 self.cv_acc_day[key].append(self.cv_acc[key])
                 self.acc_day[key].append(self.acc[key])
@@ -240,7 +266,7 @@ if __name__ == '__main__':
         start = time.time()
         pip.pipline()
         end = time.time()
-        print('Total Time = %s'%(end-start))
+        print(product, ' ----- ', day_trade[iDay],' ----- Total Time = %d s'%(end-start))
 
         pipKeyList = list(pip.keys)
         # compute cum_profit and Best_cv_score
@@ -258,7 +284,7 @@ if __name__ == '__main__':
         for j in np.arange(0,len((pip.cv_acc_day[pipKeyList[0]])[0])):
             max_al = {}
             for i in np.arange(0,len(pipKeyList)):
-                max_al[pipKeyList[i]] = np.array(pip.cv_acc_day[pipKeyList[i]])[0][j]
+                max_al[pipKeyList[i]] = pip.cv_acc_day[pipKeyList[i]][0][j]
             # select best algorithm in cv = 5
             top_cv_acc = sorted(max_al.items(),key = lambda x : x[1], reverse = True)[0:1][0]
             best_cv_score.append(top_cv_acc[1])
