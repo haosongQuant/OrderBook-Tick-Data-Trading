@@ -82,6 +82,7 @@ class Model_Selection:
         self.summary_day = []
 
         self.quoteSpread = []
+        self.bid_prz_1 = []
         self.short_loss = []
         self.long_loss = []
 
@@ -150,6 +151,7 @@ class Model_Selection:
         for day in np.arange(0,self.day):
             self.set_list() # store values
             quoteSpreadBuf = []
+            bid_prz_Buf = []
             short_lossBuf = []
             long_lossBuf = []
             for i in np.arange(0,len(self.data_set[day])-self.latest_sec-self.traded_time-self.pred_sec,
@@ -168,6 +170,7 @@ class Model_Selection:
                 y_test = data_test['0']
 
                 quoteSpreadBuf.extend(list(data_test['65']))
+                bid_prz_Buf.extend(list(data_test['67']))
                 for k in np.arange(i + self.latest_sec, i + self.latest_sec + self.pred_sec):
                     loss1 = self.data_set[day]['67'][k] - self.data_set[day]['66'][k+self.traded_time] if (k+self.traded_time) < len(self.data_set[day]) \
                             else self.data_set[day]['67'][k] - self.data_set[day]['66'][-1]
@@ -186,6 +189,7 @@ class Model_Selection:
                 #print('Total Time = %s'%(end - start)
 
             self.quoteSpread.append(quoteSpreadBuf)
+            self.bid_prz_1.append(bid_prz_Buf)
             self.short_loss.append(short_lossBuf)
             self.long_loss.append(long_lossBuf)
 
@@ -243,8 +247,8 @@ if __name__ == '__main__':
     traded_time = 60 * 5
     parms = parsePara()
 
-    datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
-    # datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
+    # datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
+    datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
     product = parms['contract']
     datelist = parms['datelist']
     tradeDir = parms['tradeDir']
@@ -271,18 +275,21 @@ if __name__ == '__main__':
 
         pipKeyList = list(pip.keys)
         # compute cum_profit and Best_cv_score
-        dict_ = {}
-        dict_['cum_profit'] = []
-        dict_['Best_cv_score'] = []
+        # dict_ = {}
+        # dict_['cum_profit'] = []
+        # dict_['Best_cv_score'] = []
 
         cum_profit_label = []
         cum_profit = []
         best_cv_score = []
+        best_bid_prz = []
 
+        bidPrz1 = pip.bid_prz_1[0][9::10]
         spread = pip.quoteSpread[0][9::10]
         loss = pip.short_loss[0][9::10] if tradeDir == 'short' else pip.long_loss[0][9::10]
 
         for j in np.arange(0,len((pip.cv_acc_day[pipKeyList[0]])[0])):
+            best_bid_prz.append(bidPrz1[j])
             max_al = {}
             for i in np.arange(0,len(pipKeyList)):
                 max_al[pipKeyList[i]] = pip.cv_acc_day[pipKeyList[i]][0][j]
@@ -307,8 +314,8 @@ if __name__ == '__main__':
                     cum_profit_label.append(0)
                     cum_profit.append(0)
 
-        dict_['cum_profit'].append(cum_profit)
-        dict_['Best_cv_score'].append(best_cv_score)
+        # dict_['cum_profit'].append(cum_profit)
+        # dict_['Best_cv_score'].append(best_cv_score)
 
         sns.set_style("whitegrid")
         plt.figure(figsize = (20,8))
@@ -321,6 +328,7 @@ if __name__ == '__main__':
         plt.ylim(-7.5,2.5)
         plt.subplot(212)
         plt.plot(np.cumsum(cum_profit),'-o',label = 'Cum Profit',lw = 1,markersize = 2)
+        plt.plot(best_bid_prz, '-r',label = 'best bid',lw = 1,markersize = 2)
         plt.axvline((4500-latest_sec-traded_time)/10)
         plt.axvline((8100-latest_sec-traded_time)/10)
         plt.legend(loc=0)

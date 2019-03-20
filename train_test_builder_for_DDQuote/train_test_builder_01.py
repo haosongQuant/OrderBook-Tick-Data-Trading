@@ -241,8 +241,8 @@ if __name__ == '__main__':
     datelist = datelist.split(',')
     for date in datelist:
         print('----------------- ', contract, ' ---- ', date, ' -----------------')
-        #quotefilepath = 'E:\\高频五档行情\\dce\\' + date
-        quotefilepath = 'D:\\高频资料\\' + date
+        quotefilepath = 'E:\\高频五档行情\\dce\\' + date
+        # quotefilepath = 'D:\\高频资料\\' + date
         quotefilename = contract + '_' + date
         traded_time = 60*5 #持仓最长5分钟
 
