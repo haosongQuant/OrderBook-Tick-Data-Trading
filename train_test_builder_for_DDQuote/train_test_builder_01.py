@@ -26,7 +26,8 @@ def feature_DataFrame(traded_time,time_second_basic,bid_price_1,ask_price_1,rise
                          W_A_B_001, W_AB_910, W_A_B_910, W_AB_820, W_A_B_820, W_AB_730 , W_A_B_730,\
                          W_AB_640, W_A_B_640, W_AB_550, W_A_B_550,W_AB_721, W_A_B_721, W_AB_532,\
                          W_A_B_532, W_AB_111, W_A_B_111, W_AB_190, W_A_B_190, W_AB_280 , W_A_B_280,\
-                         W_AB_370, W_A_B_370, W_AB_460, W_A_B_460, W_AB_127, W_A_B_127, W_AB_235, W_A_B_235):
+                         W_AB_370, W_A_B_370, W_AB_460, W_A_B_460, W_AB_127, W_A_B_127, W_AB_235, W_A_B_235,\
+                         tradeDir = 'short'):
     # 09:00 ~ 15:00
     time1 = 0
     time2 = TIME_INTV_3_45
@@ -56,7 +57,7 @@ def feature_DataFrame(traded_time,time_second_basic,bid_price_1,ask_price_1,rise
                                 W_A_B_730,W_AB_640, W_A_B_640, W_AB_550, W_A_B_550,W_AB_721, W_A_B_721,\
                                 W_AB_532,W_A_B_532, W_AB_111, W_A_B_111, W_AB_190, W_A_B_190, W_AB_280,\
                                 W_A_B_280,W_AB_370, W_A_B_370, W_AB_460, W_A_B_460, W_AB_127, W_A_B_127,\
-                                W_AB_235, W_A_B_235)
+                                W_AB_235, W_A_B_235, tradeDir)
 
     data = np.array([traded,rise_ratio_second_1,rise_ratio_second_2,rise_ratio_second_3,\
                     rise_ratio_second_4,rise_ratio_second_5,rise_ratio_second_6,rise_ratio_second_7,\
@@ -74,7 +75,7 @@ def feature_DataFrame(traded_time,time_second_basic,bid_price_1,ask_price_1,rise
 
     return pd.DataFrame(data)#,traded_1 #, columns = ['label', 'rise', 'depth_divid', 'depth_diff'])
 
-def genData(quotefile, traded_time):
+def genData(quotefile, traded_time, tradeDir = 'short'):
 
     time_sec, time_millis, bid_price_1,bid_price_2,bid_price_3,bid_quantity_1,\
             bid_quantity_2,bid_quantity_3,ask_price_1,ask_price_2,ask_price_3,ask_quantity_1,\
@@ -217,15 +218,16 @@ def genData(quotefile, traded_time):
                          W_A_B_001, W_AB_910, W_A_B_910, W_AB_820, W_A_B_820, W_AB_730 , W_A_B_730,\
                          W_AB_640, W_A_B_640, W_AB_550, W_A_B_550,W_AB_721, W_A_B_721, W_AB_532,\
                          W_A_B_532, W_AB_111, W_A_B_111, W_AB_190, W_A_B_190, W_AB_280 , W_A_B_280,\
-                         W_AB_370, W_A_B_370, W_AB_460, W_A_B_460, W_AB_127, W_A_B_127, W_AB_235, W_A_B_235)
+                         W_AB_370, W_A_B_370, W_AB_460, W_A_B_460, W_AB_127, W_A_B_127, W_AB_235, W_A_B_235,\
+                         tradeDir)
 
     return data_DF,len(W_AB_111)
 
-def train_test_to_csv(quotefilepath, quotefilename, traded_time):
+def train_test_to_csv(quotefilepath, quotefilename, traded_time, tradeDir = 'short'):
 
     quotefile = os.path.join(quotefilepath, quotefilename+'.csv')
-    data_feature_label,len_ = genData(quotefile, traded_time)
-    save_path = '../data result//trade '+str(traded_time)+' s//' + quotefilename +'_label_feature.csv'
+    data_feature_label,len_ = genData(quotefile, traded_time, tradeDir)
+    save_path = '../data result//trade '+str(traded_time)+' s//' + quotefilename +'_label_'+tradeDir+'.csv'
     data_feature_label.to_csv(save_path, index = False)
     return
 
@@ -234,13 +236,14 @@ if __name__ == '__main__':
     parms = parsePara()
     contract = parms['contract']
     datelist = parms['datelist']
-    # quotefilepath = 'D:\\高频资料\\20170103'
+    tradeDir = parms['tradeDir']
 
     datelist = datelist.split(',')
     for date in datelist:
         print('----------------- ', contract, ' ---- ', date, ' -----------------')
-        quotefilepath = 'E:\\高频五档行情\\dce\\' + date
+        #quotefilepath = 'E:\\高频五档行情\\dce\\' + date
+        quotefilepath = 'D:\\高频资料\\' + date
         quotefilename = contract + '_' + date
-        traded_time = 300 #持仓最长5分钟
+        traded_time = 60*5 #持仓最长5分钟
 
-        train_test_to_csv(quotefilepath, quotefilename, traded_time)
+        train_test_to_csv(quotefilepath, quotefilename, traded_time, tradeDir)

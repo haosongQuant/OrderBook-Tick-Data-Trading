@@ -1,5 +1,6 @@
 #coding=utf-8
 __author__ = '郝松'
+#根据time_second_basic截取指定时间段（可以多个）的数据
 
 import numpy as np
 from time_sec_def import *

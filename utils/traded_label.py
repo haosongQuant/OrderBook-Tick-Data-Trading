@@ -3,6 +3,23 @@ __author__ = 'haosong'
 import numpy as np
 from time_sec_def import *
 
+def append_trade_label(tradedlist, tradeDir, openprice, counterprice, tradeCost):
+    if tradeDir == 'short':
+        if openprice > counterprice+tradeCost:
+            tradedlist.append(1)
+        else:
+            tradedlist.append(0)
+    elif tradeDir == 'long':
+        if openprice < counterprice-tradeCost:
+            tradedlist.append(1)
+        else:
+            tradedlist.append(0)
+    else:
+        print('error: trade direction is neither short nor long, tradeDir=', tradeDir)
+        exit()
+
+    return
+
 def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_1,traded_time,\
                             rise_ratio_ask_1,rise_ratio_ask_2,rise_ratio_ask_3,rise_ratio_ask_4,\
                             rise_ratio_ask_5,rise_ratio_ask_6,rise_ratio_ask_7,rise_ratio_ask_8,\
@@ -16,7 +33,7 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
                             W_A_B_730,W_AB_640, W_A_B_640, W_AB_550, W_A_B_550,W_AB_721, W_A_B_721,\
                             W_AB_532,W_A_B_532, W_AB_111, W_A_B_111, W_AB_190, W_A_B_190, W_AB_280,\
                             W_A_B_280,W_AB_370, W_A_B_370, W_AB_460, W_A_B_460, W_AB_127, W_A_B_127,\
-                            W_AB_235, W_A_B_235):
+                            W_AB_235, W_A_B_235, tradeDir = 'short', tradeCost = 0.0):
     global index
 
     traded = []
@@ -100,21 +117,20 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
 
         if len(index_array) > 0:
             index = index_array[-1]
+            openprice = bid_price_1[index] if tradeDir == 'short' else ask_price_1[index]
             if i < close_time_basic - traded_time:
-                index_min = np.where(time_second_basic <= i + traded_time)[0][-1]
-                traded_min = ask_price_1[index:index_min]
-                if len(traded_min) == 0:
+                trade_time_end = np.where(time_second_basic <= i + traded_time)[0][-1]
+                traded_time_counter_prices = ask_price_1[index:trade_time_end] if tradeDir == 'short' \
+                                        else bid_price_1[index:trade_time_end]
+                if len(traded_time_counter_prices) == 0:
                     traded.append(0)
                 else:
-                    if bid_price_1[index] > min(traded_min):
-                        traded.append(1)
-                    else:
-                        traded.append(0)
+                    counterprice = min(traded_time_counter_prices) if tradeDir == 'short' \
+                              else max(traded_time_counter_prices)
+                    append_trade_label(traded, tradeDir, openprice, counterprice, tradeCost)
             elif i >= close_time_basic - traded_time:
-                if bid_price_1[index] > ask_price_1[-1]:
-                    traded.append(1)
-                else:
-                    traded.append(0)
+                counterprice = ask_price_1[-1] if tradeDir == 'short' else bid_price_1[-1]
+                append_trade_label(traded, tradeDir, openprice, counterprice, tradeCost)
 
             rise_ratio_second_1.append(rise_ratio_ask_1[ index ])
             rise_ratio_second_2.append(rise_ratio_ask_2[ index ])
@@ -188,21 +204,8 @@ def traded_label_one_second(time1,time2,time_second_basic,bid_price_1,ask_price_
 
         elif len(index_array) == 0:
             print('warning: index_array is empty!')
-            if i < close_time_basic - traded_time:
-                index_min = np.where(time_second_basic <= i + traded_time)[0][-1]
-                traded_min = ask_price_1[index:index_min]
-                if len(traded_min) == 0:
-                    traded.append(0)
-                else:
-                    if bid_price_1[index] > min(traded_min):
-                        traded.append(1)
-                    else:
-                        traded.append(0)
-            elif i >= close_time_basic - traded_time:
-                if bid_price_1[index] > ask_price_1[-1]:
-                    traded.append(1)
-                else:
-                    traded.append(0)
+
+            traded.append(traded[-1])
             rise_ratio_second_1.append(rise_ratio_second_1[-1])
             rise_ratio_second_2.append(rise_ratio_second_2[-1])
             rise_ratio_second_3.append(rise_ratio_second_3[-1])

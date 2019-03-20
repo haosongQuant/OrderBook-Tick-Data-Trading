@@ -19,10 +19,10 @@ import seaborn as sns
 sys.path.append('..//utils')
 from parsePara import parsePara
 
-def read_csv(path, product, day_trade):
+def read_csv(path, product, day_trade, tradeDir = 'short'):
     data_label_feature = []
     for k in np.arange(0,len(day_trade)):
-        read_path = os.path.join(path, product + '_' + day_trade[k]  + '_label_feature.csv')
+        read_path = os.path.join(path, product + '_' + day_trade[k]  + '_label_'+tradeDir+'.csv')
         data_label_feature.append(pd.read_csv(read_path))
     return data_label_feature
 
@@ -243,10 +243,11 @@ if __name__ == '__main__':
     traded_time = 60 * 5
     parms = parsePara()
 
-    # datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\train_test_builder_for_DDQuote'
-    datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
+    datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
+    # datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
     product = parms['contract']
     datelist = parms['datelist']
+    tradeDir = parms['tradeDir']
     day_trade = datelist.split(',')
 
     # data_label_feature = read_csv(datasetPath, product, day_trade)
@@ -279,7 +280,7 @@ if __name__ == '__main__':
         best_cv_score = []
 
         spread = pip.quoteSpread[0][9::10]
-        loss = pip.short_loss[0][9::10]
+        loss = pip.short_loss[0][9::10] if tradeDir == 'short' else pip.long_loss[0][9::10]
 
         for j in np.arange(0,len((pip.cv_acc_day[pipKeyList[0]])[0])):
             max_al = {}
@@ -327,7 +328,6 @@ if __name__ == '__main__':
         plt.ylabel('Profit',size = 15)
         # plt.show()
 
-        savePath = os.path.join('D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s',
-                                product+'_'+day_trade[iDay]+'.png')
+        savePath = os.path.join(datasetPath, product+'_'+day_trade[iDay]+'_'+tradeDir+'.png')
         plt.savefig(savePath)
         plt.close()
