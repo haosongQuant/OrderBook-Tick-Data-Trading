@@ -247,8 +247,8 @@ if __name__ == '__main__':
     traded_time = 60 * 5
     parms = parsePara()
 
-    # datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
-    datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
+    datasetPath = 'C:\\Users\\haosong\\Documents\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
+    # datasetPath = 'D:\\OrderBook-Tick-Data-Trading\\data result\\trade '+str(traded_time)+' s'
     product = parms['contract']
     datelist = parms['datelist']
     tradeDir = parms['tradeDir']
@@ -327,15 +327,19 @@ if __name__ == '__main__':
         plt.legend(loc=0)
         plt.ylim(-7.5,2.5)
 
-        fig, ax1 = plt.subplot(212)
+        ax1 = plt.subplot(212)
         ax1.plot(np.cumsum(cum_profit),'-o',label = 'Cum Profit',lw = 1,markersize = 2)
+        plt.legend(loc="upper left")
+        plt.ylabel('Profit',size = 15)
+
         ax2 = ax1.twinx()
         ax2.plot(best_bid_prz, '-r',label = 'best bid',lw = 1,markersize = 2)
+        plt.ylabel('best bid',size = 15)
+        plt.legend(loc=0)
+
         plt.axvline((4500-latest_sec-traded_time)/10)
         plt.axvline((8100-latest_sec-traded_time)/10)
-        plt.legend(loc=0)
         plt.xlabel('Rolling Window Numbers',size = 15)
-        plt.ylabel('Profit',size = 15)
         # plt.show()
 
         savePath = os.path.join(datasetPath, product+'_'+day_trade[iDay]+'_'+tradeDir+'.png')
